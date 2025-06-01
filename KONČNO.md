@@ -25,6 +25,8 @@ Na koncu smo tako dobili dve glavni datoteki za analizo:
 vse_cene_grouped.csv
 vse_cene_grouped_top6.csv  (zakaj top 6 kasneje)
 
+![alt text](image.png)
+
 Za uravnovešenje cen skozi leta in pošteno primerjavo med trgovinami smo uporabili še indeks spremembe cen glede na leto 2015, ki smo ga pridobili s spletne strani SURS in Eurostat. Iz teh virov smo pripravili še dodatne datoteke:
 
 EU-indeksi.csv
@@ -42,40 +44,72 @@ DEL Z IZDELKI
 Analiza cen izdelkov skozi čas nam je pokazala več zanimivih trendov:
 
 Stabilnost cen osnovnih izdelkov:
+
+![alt text](image-1.png)
+
 Pri nekaterih izdelkih, kot so banane, smo opazili izjemno stabilnost cene skozi več let, kar kaže na močno konkurenco in dobro reguliran trg za osnovne prehrambne izdelke.
 
 Rast cen posameznih izdelkov:
 Pri drugih izdelkih, kot je rdeči krompir, je bila zaznana izrazita rast cene, kar lahko pripišemo bodisi sezonskim vplivom, spremembam v ponudbi/povpraševanju ali zunanjim dejavnikom (npr. podražitve surovin).
 
 Najdražji in najcenejši izdelki v polletjih:
+
+![alt text](image-2.png)
+
 S spremljanjem najvišjih in najnižjih cen v vsakem polletju smo lahko identificirali izdelke, ki so pogosto izstopali kot najdražji ali najcenejši. Zanimivo je, da so se nekateri izdelki (npr. kajzerica) več let zapored pojavljali kot najcenejši, kar kaže na njihovo vlogo kot "cenovni magnet" za kupce.
 
 Največje spremembe cen:
+
+![alt text](image-11.png)
+
 Analiza izdelkov z največjimi povprečnimi spremembami cene je razkrila, da so to pogosto izdelki, ki so podvrženi akcijam ali sezonskim nihanjem. Ti izdelki so za trgovce pogosto orodje za privabljanje kupcev ali uravnavanje zalog.
 
 Segmentacija cen:
+
+![alt text](image-6.png)
+
 S segmentacijo izdelkov v cenovne razrede (nizka, srednja, visoka) smo ugotovili, da se delež izdelkov v posameznem segmentu skozi čas spreminja. V določenih obdobjih je opaziti premik proti dražjim ali cenejšim izdelkom, kar lahko odraža širše gospodarske trende ali spremembe v ponudbi.
 
 
 DEL S TRGOVINAM
 
 Primerjava izdelkov med trgovinami:
+
+![alt text](image-3.png)
+
 Zaradi omejene količine podatkov smo se osredotočili na največkrat omenjene trgovine (top 6 - Mercator, Hofer, Lidl, Spar, Tuš in Eurospin) in izdelke, ki se pojavljajo v več trgovinah. S tem smo omogočili neposredno primerjavo cen in ponudbe med največjimi trgovci.
 
 Vennovi diagrami:
+
+![alt text](image-4.png)
+
 Analiza prekrivanja izdelkov med trgovinami s pomočjo Vennovih diagramov je pokazala, da obstaja precejšnje število izdelkov, ki so prisotni v več trgovinah, a je hkrati tudi veliko unikatnih izdelkov, ki jih ponuja le ena trgovina.
 
 Heatmap cen:
+
+![alt text](image-5.png)
+
 Toplotni zemljevid (heatmap) cen izdelkov po trgovinah je razkril, da so razlike v cenah med trgovinami lahko precejšnje, še posebej pri izdelkih, ki so prisotni v vsaj treh trgovinah. Nekatere trgovine so pogosto najcenejše, druge pa izstopajo z višjimi cenami.
 
 Povprečne cene in delež najcenejših izdelkov:
+
+![alt text](image-7.png)
+
+![alt text](image-8.png)
+
 Z analizo povprečnih cen in deleža najcenejših izdelkov po trgovinah smo ugotovili, da ni nujno, da je ena trgovina vedno najcenejša – pogosto se najcenejši izdelki porazdelijo med več trgovin, kar kaže na dinamično cenovno politiko.
 
 Inflacija in primerjava skozi čas
 Upoštevanje inflacije:
+
+![alt text](image-9.png)
+
 Za pošteno primerjavo cen skozi leta smo cene prilagodili z inflacijskim indeksom. S tem smo lahko ugotovili, ali so se realne cene izdelkov resnično spreminjale ali pa so spremembe posledica splošne rasti cen v gospodarstvu.
 
 Primerjava z uradnimi podatki:
+
+![alt text](image-10.png)
+
 Na koncu smo naše podatke primerjali še z uradnimi podatki SURS in Eurostat. Ugotovili smo, da so naše povprečne cene v večini primerov zelo blizu uradnim, kar potrjuje zanesljivost našega pristopa in kakovost zbranih podatkov.
 
 Sklep:
