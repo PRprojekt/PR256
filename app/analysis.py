@@ -652,24 +652,44 @@ def data_mining_analysis(df: pd.DataFrame) -> None:
         st.warning("Premalo podatkov za grupiranje (potrebnih več kot 5)")
         return
 
+    # ... previous code ...
+
     # Skaliraj značilnosti
     scaler = StandardScaler()
     scaled_features = scaler.fit_transform(feature_data)
 
-    # Grupiranje
-    n_clusters = st.slider("Število skupin:", 2, 6, 3)
+    # Only ONE slider, with a unique key
+    n_clusters = st.slider("Število skupin:", 2, 6, 3, key="kmeans_n_clusters")
     kmeans = KMeans(n_clusters=n_clusters, random_state=42)
     clusters = kmeans.fit_predict(scaled_features)
+
+    # PCA za vizualizacijo
+    pca = PCA(n_components=2)
+    pca_features = pca.fit_transform(scaled_features)
 
     col1, col2 = st.columns(2)
 
     with col1:
-        # PCA vizualizacija
-        pca = PCA(n_components=2)
-        pca_features = pca.fit_transform(scaled_features)
+        st.markdown("""
+        **Vizualizacija skupin (PCA):**
+        
+        Vsaka pika predstavlja en izdelek. Barva označuje skupino, v katero je izdelek razvrščen na podlagi podobnosti (cena, dolžina imena, čas).
+        
+        Osi "Glavna komponenta 1" in "Glavna komponenta 2" sta umetni osi, ki povzemata največ razlik med izdelki glede na vse uporabljene značilnosti. Večja razdalja med pikami pomeni večjo razliko med izdelki.
+        """)
 
-        fig = px.scatter(x=pca_features[:, 0], y=pca_features[:, 1],
-                         color=clusters, title='Vizualizacija')
+        fig = px.scatter(
+            x=pca_features[:, 0],
+            y=pca_features[:, 1],
+            color=clusters.astype(str),
+            labels={
+                'x': 'Glavna komponenta 1 (največja razlika med izdelki)',
+                'y': 'Glavna komponenta 2 (druga največja razlika)',
+                'color': 'Skupina'
+            },
+            title='Skupine izdelkov glede na podobnost (PCA vizualizacija)'
+        )
+        fig.update_traces(marker=dict(size=8, line=dict(width=1, color='DarkSlateGrey')))
         st.plotly_chart(fig, use_container_width=True)
 
     with col2:
@@ -684,6 +704,19 @@ def data_mining_analysis(df: pd.DataFrame) -> None:
         cluster_stats.columns = ['Povprečna cena', 'Število']
         st.write("**Statistike skupin:**")
         st.dataframe(cluster_stats)
+        cluster_stats = cluster_df.groupby('Cluster').agg({
+            'Price': ['mean', 'count']
+        }).round(2)
+        cluster_stats.columns = ['Povprečna cena', 'Število']
+        st.write("**Statistike skupin:**")
+        st.dataframe(cluster_stats)
+
+        # Izpis imen izdelkov po skupinah
+        st.write("**Izdelki v posameznih skupinah:**")
+        for cluster_num in sorted(cluster_df['Cluster'].unique()):
+            st.markdown(f"**Skupina {cluster_num}:**")
+            names = cluster_df[cluster_df['Cluster'] == cluster_num]['Product Name'].unique()
+            st.write(", ".join(names[:20]) + (" ..." if len(names) > 20 else ""))  # Show first 20, then "..."
 
     # Korelacijska analiza
     st.subheader("Korelacijska analiza")
