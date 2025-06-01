@@ -1,6 +1,8 @@
+POROČILO:
+
 Pridobivanje in čiščenje podatkov:
 
-Za našo analizo smo se najprej lotili zbiranja podatkov s spletne strani vsikatalogi.si, kjer smo uporabili oba glavna vira: akcije in vikend-akcije. Celoten postopek pridobivanja podatkov je natančno opisan in dokumentiran v datoteki scraping.ipynb.
+Za našo analizo smo se najprej lotili zbiranja podatkov s spletne strani [vsikatalogi.si](https://vsikatalogi.si), kjer smo uporabili oba glavna vira: [akcije](https://vsikatalogi.si/akcije) in [vikend-akcije](https://vsikatalogi.si/vikend-akcije). Celoten postopek pridobivanja podatkov je natančno opisan in dokumentiran v datoteki scraping.ipynb.
 
 Iz tega procesa smo najprej pridobili dve surovi CSV datoteki:
 
@@ -16,7 +18,7 @@ Ker sta bili strukturi obeh datotek enaki, smo ju lahko brez težav združili v 
 
 vse_cene.csv
 
-S tem pa se je delo šele začelo. V datoteki urejanje_tabel.ipynb smo se lotili še bolj poglobljenega čiščenja in priprave podatkov za analizo. Najprej smo odstranili osamelce oziroma izdelke, ki so se pojavljali le izjemoma (v zadnjih kvartilih). Pri čiščenju se je pojavil tudi problem različnih zapisov za iste izdelke (npr. "Naravne banane" in "Rumene banane"), zato smo uporabili knjižnico rapidfuzz, ki nam je pomagala podobne izdelke združiti v skupine. Čeprav rezultat ni bil popoln, je bistveno izboljšal konsistentnost podatkov.
+S tem pa se je delo šele začelo. V datoteki urejanje_tabel.ipynb smo se lotili še bolj poglobljenega čiščenja in priprave podatkov za analizo. Najprej smo odstranili osamelce oziroma izdelke, ki so se pojavljali le izjemoma (v zadnjih kvartilih), torej smo se odstranili izdelkov, ki so imeli absurdne cene. Pri čiščenju se je pojavil tudi problem različnih zapisov za iste izdelke (npr. "Naravne banane" in "Rumene banane"), zato smo uporabili knjižnico rapidfuzz, ki nam je pomagala podobne izdelke združiti v skupine. Čeprav rezultat ni bil popoln, je bistveno izboljšal konsistentnost podatkov.
 
 Na koncu smo tako dobili dve glavni datoteki za analizo:
 
@@ -30,34 +32,13 @@ podatki/SLO-cene.csv
 podatki/razmerje_cen.csv
 
 Analiza:
-Aalizo smo spremenili na dva dela, in to sicer na del z izdelki in del z trgovinami.
-
-DEL Z IZDELKI:
-
-- Eden od zanimivih grafov je graf povprečne cene top 5 izdelkov,ki se najpogosteje pojavijo.
-
-![alt text](image-1.png)
-
-Iz tega grafa lahko raberemo da banane zelo lepo držijo ceno okoli 1 euro, ter pa veliko povečanje cene rdečega kromperja.
-
-- Zanimivi pa so tudi podaki, najcenejšega in najdražjega izdelka v polletju.
-![alt text](image-2.png)
-
-Iz te slike pa je vidno vztrajanje cene kajzerice skozi kar 3leta in pol.
-
-DEL Z TRGOVINAMI:
-
-- ker smo imeli zelo omejeno količino podatkov smo najprej naredili prikaz vseh izdelkov, ki se pojavijo v večih trgovinah, tako da jih lahko med sabo primerjamo.
-![alt text](image-3.png)
-- tukaj pa imamo par venovih diagramov, ki kažejo vsebovanost izdelkov med različnimi trgovinami:
-![alt text](image-4.png)
-
-- Nam osebno najbol zanimiv del pa je heatmap cen izdelkov glede na trgovine:
-![alt text](image-5.png)
+Aalizo smo spremenili na dva dela, in to sicer na del z izdelki in cenami in del z trgovinami.
 
 
-Interpretacija analize
-Del z izdelki
+Interpretacija analize:
+
+DEL Z IZDELKI 
+
 Analiza cen izdelkov skozi čas nam je pokazala več zanimivih trendov:
 
 Stabilnost cen osnovnih izdelkov:
@@ -75,9 +56,11 @@ Analiza izdelkov z največjimi povprečnimi spremembami cene je razkrila, da so 
 Segmentacija cen:
 S segmentacijo izdelkov v cenovne razrede (nizka, srednja, visoka) smo ugotovili, da se delež izdelkov v posameznem segmentu skozi čas spreminja. V določenih obdobjih je opaziti premik proti dražjim ali cenejšim izdelkom, kar lahko odraža širše gospodarske trende ali spremembe v ponudbi.
 
-Del s trgovinami
+
+DEL S TRGOVINAM
+
 Primerjava izdelkov med trgovinami:
-Zaradi omejene količine podatkov smo se osredotočili na izdelke, ki se pojavljajo v več trgovinah. S tem smo omogočili neposredno primerjavo cen in ponudbe med največjimi trgovci.
+Zaradi omejene količine podatkov smo se osredotočili na največkrat omenjene trgovine (top 6 - Mercator, Hofer, Lidl, Spar, Tuš in Eurospin) in izdelke, ki se pojavljajo v več trgovinah. S tem smo omogočili neposredno primerjavo cen in ponudbe med največjimi trgovci.
 
 Vennovi diagrami:
 Analiza prekrivanja izdelkov med trgovinami s pomočjo Vennovih diagramov je pokazala, da obstaja precejšnje število izdelkov, ki so prisotni v več trgovinah, a je hkrati tudi veliko unikatnih izdelkov, ki jih ponuja le ena trgovina.
