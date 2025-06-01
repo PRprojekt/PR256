@@ -1,6 +1,6 @@
-POROČILO:
+**POROČILO:**
 
-Pridobivanje in čiščenje podatkov:
+**Pridobivanje in čiščenje podatkov:**
 
 Za našo analizo smo se najprej lotili zbiranja podatkov s spletne strani [vsikatalogi.si](https://vsikatalogi.si), kjer smo uporabili oba glavna vira: [akcije](https://vsikatalogi.si/akcije) in [vikend-akcije](https://vsikatalogi.si/vikend-akcije). Celoten postopek pridobivanja podatkov je natančno opisan in dokumentiran v datoteki scraping.ipynb.
 
@@ -33,13 +33,13 @@ EU-indeksi.csv
 podatki/SLO-cene.csv
 podatki/razmerje_cen.csv
 
-Analiza:
+***Analiza:**
 Aalizo smo spremenili na dva dela, in to sicer na del z izdelki in cenami in del z trgovinami.
 
 
 Interpretacija analize:
 
-DEL Z IZDELKI 
+**DEL Z IZDELKI**
 
 Analiza cen izdelkov skozi čas nam je pokazala več zanimivih trendov:
 
@@ -71,7 +71,7 @@ Segmentacija cen:
 S segmentacijo izdelkov v cenovne razrede (nizka, srednja, visoka) smo ugotovili, da se delež izdelkov v posameznem segmentu skozi čas spreminja. V določenih obdobjih je opaziti premik proti dražjim ali cenejšim izdelkom, kar lahko odraža širše gospodarske trende ali spremembe v ponudbi.
 
 
-DEL S TRGOVINAM
+**DEL S TRGOVINAM**
 
 Primerjava izdelkov med trgovinami:
 
@@ -111,6 +111,12 @@ Primerjava z uradnimi podatki:
 ![alt text](image-10.png)
 
 Na koncu smo naše podatke primerjali še z uradnimi podatki SURS in Eurostat. Ugotovili smo, da so naše povprečne cene v večini primerov zelo blizu uradnim, kar potrjuje zanesljivost našega pristopa in kakovost zbranih podatkov.
+
+**Napovedovanje prihodnjih cen:**
+Na podlagi zgodovinskih podatkov in z upoštevanjem sezonskih nihanj smo pripravili tudi napoved gibanja povprečnih cen za naslednjih pet let. Uporabili smo model linearne regresije, ki poleg dolgoročnega trenda upošteva tudi tipične mesečne vzorce (npr. višje cene v decembru). Rezultati napovedi kažejo, da lahko pričakujemo postopno rast cen, pri čemer bodo mesečna nihanja še naprej prisotna. Podobno smo pripravili tudi napovedi za posamezne kategorije izdelkov, kjer so razlike med kategorijami še bolj izrazite – nekateri segmenti bodo rasli hitreje, drugi počasneje ali celo ostali stabilni. Takšna napoved je lahko v pomoč tako potrošnikom kot trgovcem pri načrtovanju prihodnjih nakupov in strategij.
+
+![alt text](2309.png)
+
 
 Sklep:
 Analiza je pokazala, da je trg živil v Sloveniji zelo dinamičen, z veliko konkurenco in pogostimi akcijami. Kljub temu pa so določeni izdelki in trgovine skozi čas ohranjali stabilnost ali celo prednost v cenah. Pristop, ki združuje avtomatsko zbiranje podatkov, napredno čiščenje in primerjavo z uradnimi viri, se je izkazal za zelo učinkovitega pri razumevanju dogajanja na trgu.

@@ -580,6 +580,97 @@ def store_analysis(df: pd.DataFrame) -> None:
     st.subheader('Statistika trgovin')
     st.dataframe(store_stats)
 
+def plot_category_price_predictions(df: pd.DataFrame):
+    st.subheader("📈 Napoved cen po kategorijah (trend + sezona, 2 leti naprej)")
+    if df.empty or 'Date' not in df.columns or 'Price' not in df.columns or 'Category' not in df.columns:
+        st.warning("Podatki niso na voljo ali manjkajo potrebni stolpci.")
+        return
+
+    df = df.copy()
+    df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
+    df = df.dropna(subset=['Date'])
+    top_categories = df['Category'].value_counts().head(5).index.tolist()
+    n_months = 24  # 2 years for clarity
+
+    import plotly.graph_objects as go
+    fig = go.Figure()
+    for cat in top_categories:
+        cat_df = df[df['Category'] == cat]
+        monthly = cat_df.groupby(cat_df['Date'].dt.to_period('M'))['Price'].mean().reset_index()
+        if len(monthly) < 12:
+            continue
+        monthly['Date'] = monthly['Date'].dt.to_timestamp()
+        monthly['MonthsSinceStart'] = (monthly['Date'].dt.year - monthly['Date'].dt.year.min()) * 12 + (monthly['Date'].dt.month - monthly['Date'].dt.month.min())
+        monthly['Month'] = monthly['Date'].dt.month
+        X = pd.get_dummies(monthly[['MonthsSinceStart', 'Month']], columns=['Month'])
+        y = monthly['Price'].values
+
+        from sklearn.linear_model import LinearRegression
+        model = LinearRegression()
+        model.fit(X, y)
+
+        future_months_since_start = np.arange(monthly['MonthsSinceStart'].iloc[-1] + 1, monthly['MonthsSinceStart'].iloc[-1] + n_months + 1)
+        future_months = ((future_months_since_start + monthly['Date'].dt.month.min() - 1) % 12) + 1
+        future_X = pd.DataFrame({'MonthsSinceStart': future_months_since_start, 'Month': future_months})
+        future_X = pd.get_dummies(future_X, columns=['Month'])
+        for col in X.columns:
+            if col not in future_X.columns:
+                future_X[col] = 0
+        future_X = future_X[X.columns]
+        future_dates = pd.date_range(monthly['Date'].max() + pd.offsets.MonthBegin(1), periods=n_months, freq='MS')
+        future_pred = model.predict(future_X)[:n_months]
+
+        fig.add_trace(go.Scatter(x=monthly['Date'], y=y, mode='lines+markers', name=f'{cat} (zgodovina)'))
+        fig.add_trace(go.Scatter(x=future_dates, y=future_pred, mode='lines', name=f'{cat} (napoved)', line=dict(dash='dash')))
+
+    fig.update_layout(title='Napoved povprečne cene po kategorijah (naslednji 2 leti)',
+                      xaxis_title='Datum', yaxis_title='Povprečna cena (€)')
+    st.plotly_chart(fig, use_container_width=True)
+
+def plot_price_prediction(df: pd.DataFrame):
+    st.subheader("📈 Napoved povprečne cene (trend + sezona, 5 let naprej)")
+    if df.empty or 'Date' not in df.columns or 'Price' not in df.columns:
+        st.warning("Podatki niso na voljo ali manjkajo potrebni stolpci.")
+        return
+
+    df = df.copy()
+    df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
+    df = df.dropna(subset=['Date'])
+    monthly = df.groupby(df['Date'].dt.to_period('M'))['Price'].mean().reset_index()
+    monthly['Date'] = monthly['Date'].dt.to_timestamp()
+    monthly['MonthsSinceStart'] = (monthly['Date'].dt.year - monthly['Date'].dt.year.min()) * 12 + (monthly['Date'].dt.month - monthly['Date'].dt.month.min())
+    monthly['Month'] = monthly['Date'].dt.month
+
+    # Features: trend + month (one-hot)
+    X = pd.get_dummies(monthly[['MonthsSinceStart', 'Month']], columns=['Month'])
+    y = monthly['Price'].values
+
+    from sklearn.linear_model import LinearRegression
+    model = LinearRegression()
+    model.fit(X, y)
+
+    # Predict for next 5 years (60 months)
+    future_months_since_start = np.arange(monthly['MonthsSinceStart'].iloc[-1] + 1, monthly['MonthsSinceStart'].iloc[-1] + 61)
+    future_months = ((future_months_since_start + monthly['Date'].dt.month.min() - 1) % 12) + 1
+    future_X = pd.DataFrame({'MonthsSinceStart': future_months_since_start, 'Month': future_months})
+    future_X = pd.get_dummies(future_X, columns=['Month'])
+    for col in X.columns:
+        if col not in future_X.columns:
+            future_X[col] = 0
+    future_X = future_X[X.columns]  # align columns
+
+    future_dates = pd.date_range(monthly['Date'].max() + pd.offsets.MonthBegin(1), periods=60, freq='MS')
+    future_pred = model.predict(future_X)
+
+    import plotly.graph_objects as go
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=monthly['Date'], y=y, mode='lines+markers', name='Zgodovinsko povprečje'))
+    fig.add_trace(go.Scatter(x=future_dates, y=future_pred, mode='lines', name='Napoved (trend + sezona)', line=dict(dash='dash', color='red')))
+    fig.update_layout(title='Napoved povprečne cene za naslednjih 5 let (trend + mesečna sezona)',
+                      xaxis_title='Datum', yaxis_title='Povprečna cena (€)')
+    st.plotly_chart(fig, use_container_width=True)
+    st.dataframe(pd.DataFrame({'Mesec': future_dates.strftime('%Y-%m'), 'Napovedana povprečna cena (€)': future_pred}).head(12))
+
 
 def category_analysis(df: pd.DataFrame) -> None:
     """Analiza kategorij"""
@@ -626,6 +717,9 @@ def data_mining_analysis(df: pd.DataFrame) -> None:
     if df.empty:
         st.warning("Ni podatkov za analizo")
         return
+    
+    plot_price_prediction(df)
+    plot_category_price_predictions(df)
 
     # K-means grupiranje
     st.subheader("K-means grupiranje")
