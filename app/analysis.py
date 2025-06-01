@@ -38,6 +38,25 @@ def plot_top_bottom_prices_over_time(df: pd.DataFrame):
     ax.legend()
     st.pyplot(fig)
 
+def plot_average_price_by_month(df: pd.DataFrame):
+    if df.empty or 'Date' not in df.columns or 'Price' not in df.columns:
+        st.warning("Podatki niso na voljo ali manjkajo potrebni stolpci.")
+        return
+    df['Month'] = df['Date'].dt.month
+    avg_price_month = df.groupby('Month')['Price'].mean()
+    import plotly.express as px
+    fig = px.line(
+        x=avg_price_month.index,
+        y=avg_price_month.values,
+        markers=True,
+        labels={'x': 'Mesec', 'y': 'Povprečna cena (€)'},
+        title='Povprečna cena po mesecih (vseh let skupaj)'
+    )
+    fig.update_layout(xaxis=dict(tickmode='array', tickvals=list(range(1,13)), ticktext=[
+        'Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Avg', 'Sep', 'Okt', 'Nov', 'Dec'
+    ]))
+    st.plotly_chart(fig, use_container_width=True)
+
 def plot_extreme_items_halfyear(df: pd.DataFrame):
     st.subheader("🏆 Najdražji in najcenejši izdelek po polletjih")
     if df.empty or 'Date' not in df.columns or 'Price' not in df.columns or 'Product Name Grouped' not in df.columns:
@@ -248,7 +267,46 @@ def inflation_analysis_section():
     )
 
 
+def plot_category_store_heatmap(df: pd.DataFrame):
+    st.subheader("🔥 Toplota: Povprečne cene po kategorijah in trgovinah")
+    if df.empty or 'Category' not in df.columns or 'Store' not in df.columns or 'Price' not in df.columns:
+        st.warning("Podatki niso na voljo ali manjkajo potrebni stolpci.")
+        return
+    pivot = df.pivot_table(index='Category', columns='Store', values='Price', aggfunc='mean')
+    if pivot.empty:
+        st.info("Ni dovolj podatkov za prikaz.")
+        return
+    import plotly.express as px
+    fig = px.imshow(
+        pivot,
+        labels=dict(x="Trgovina", y="Kategorija", color="Povprečna cena (€)"),
+        color_continuous_scale="RdYlGn_r",
+        aspect="auto",
+        title="Povprečne cene po kategorijah in trgovinah"
+    )
+    st.plotly_chart(fig, use_container_width=True)
 
+def plot_product_store_heatmap(df: pd.DataFrame):
+    st.subheader("🔥 Toplota: Povprečne cene po izdelkih in trgovinah")
+    if df.empty or 'Product Name Grouped' not in df.columns or 'Store' not in df.columns or 'Price' not in df.columns:
+        st.warning("Podatki niso na voljo ali manjkajo potrebni stolpci.")
+        return
+    # Prikaži samo najbolj pogoste izdelke (npr. top 30), da je heatmap pregleden
+    top_products = df['Product Name Grouped'].value_counts().head(30).index
+    df_top = df[df['Product Name Grouped'].isin(top_products)]
+    pivot = df_top.pivot_table(index='Product Name Grouped', columns='Store', values='Price', aggfunc='mean')
+    if pivot.empty:
+        st.info("Ni dovolj podatkov za prikaz.")
+        return
+    import plotly.express as px
+    fig = px.imshow(
+        pivot,
+        labels=dict(x="Trgovina", y="Izdelek", color="Povprečna cena (€)"),
+        color_continuous_scale="RdYlGn_r",
+        aspect="auto",
+        title="Povprečne cene po izdelkih in trgovinah (top 30 izdelkov)"
+    )
+    st.plotly_chart(fig, use_container_width=True)
 
 
 def time_analysis(df: pd.DataFrame) -> None:
@@ -260,6 +318,7 @@ def time_analysis(df: pd.DataFrame) -> None:
 
     # 1. Povprečna cena skozi čas (prvi graf)
     plot_average_price_trend(df)
+    plot_average_price_by_month(df)
 
     # 2. Sezonska analiza
     st.subheader("🗓️ Sezonska analiza")
@@ -555,6 +614,9 @@ def category_analysis(df: pd.DataFrame) -> None:
                             y=category_store.index,
                             title='Cene: Kategorije vs Trgovine')
             st.plotly_chart(fig, use_container_width=True)
+
+    plot_category_store_heatmap(df)
+    plot_product_store_heatmap(df)
 
 
 def data_mining_analysis(df: pd.DataFrame) -> None:
